@@ -1,3 +1,8 @@
+# Инфраструктурный репозиторий проекта YACGP
+
+## Предполагаемая архитектура
+![image](https://github.com/AlexeyVorobyev/YACGP-DevOps/assets/42997441/e9ef5786-9c45-4a21-91d7-efad0894e5ac)
+
 ## Команды для работы с GIT
 
 ```shell
