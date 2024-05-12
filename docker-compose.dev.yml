@@ -1,0 +1,45 @@
+version: "1.0"
+name: "yacgp-dev"
+
+services:
+  yacgp-message-broker-handler-zookeeper:
+    image: wurstmeister/zookeeper
+    container_name: yacgp-message-broker-handler-zookeeper
+    hostname: yacgp-message-broker-handler-zookeeper
+    ports:
+      - ${YACGP_MESSAGE_BROKER_HANDLER_ZOOKEEPER_EXTERNAL_PORT}:2181
+    networks:
+      yacgp-dev-network:
+        ipv4_address: ${YACGP_MESSAGE_BROKER_HANDLER_ZOOKEEPER_ADDRESS}
+
+  yacgp-message-broker-kafka:
+    container_name: yacgp-message-broker-kafka
+    hostname: yacgp-message-broker-kafka
+    image: wurstmeister/kafka
+    ports:
+      - ${YACGP_MESSAGE_BROKER_KAFKA_EXTERNAL_PORT}:9092
+    environment:
+      KAFKA_ZOOKEEPER_CONNECT: yacgp-message-broker-handler-zookeeper:${YACGP_MESSAGE_BROKER_HANDLER_ZOOKEEPER_ADDRESS}
+    networks:
+      yacgp-dev-network:
+        ipv4_address: ${YACGP_MESSAGE_BROKER_KAFKA_ADDRESS}
+
+  yacgp-reverse-proxy-nginx:
+    container_name: yacgp-reverse-proxy-nginx
+    hostname: yacgp-reverse-proxy-nginx
+    build:
+      context: ./config/nginx
+    ports:
+      - ${YACGP_REVERSE_PROXY_NGINX_EXTERNAL_PORT}:80
+    networks:
+      yacgp-dev-network:
+        ipv4_address: ${YACGP_REVERSE_PROXY_NGINX_ADDRESS}
+
+networks:
+  yacgp-dev-network:
+    driver: bridge
+    external: true
+    ipam:
+      config:
+        - subnet: ${COMPOSE_SUBNET}
+          gateway: ${COMPOSE_GATEWAY}
